@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  password     String
+  createdAt    DateTime        @default(now())
+  dashboard    DashboardState?
+  integrations Integration[]
+  metrics      MetricSnapshot[]
+  tasks        DailyTask[]
+  memoryNotes  AiMemoryNote[]
+}
+
+model DashboardState {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// One row per connected data source per user.
+// OAuth sources (Strava) use accessToken/refreshToken/expiresAt.
+// API-key sources (Hevy, Wallet) use apiKey.
+// Health Auto Export uses webhookSecret instead — no login step.
+model Integration {
+  id            String    @id @default(cuid())
+  userId        String
+  provider      String    // "strava" | "hevy" | "wallet" | "health_auto_export"
+  accessToken   String?
+  refreshToken  String?
+  expiresAt     DateTime?
+  apiKey        String?
+  webhookSecret String?   @unique
+  lastSyncedAt  DateTime?
+  lastError     String?
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+}
+
+// Normalized store for everything pulled or pushed in from external sources.
+// Kept generic (source/type/date/value/raw) so every integration writes the same shape.
+// externalId (the source's own id for the record, e.g. a Strava activity id) lets
+// repeat syncs update instead of duplicate.
+model MetricSnapshot {
+  id         String   @id @default(cuid())
+  userId     String
+  source     String   // "strava" | "hevy" | "wallet" | "health_auto_export"
+  type       String   // e.g. "workout", "sleep", "steps", "transaction", "weight"
+  externalId String?  // the source's own id for this record, when it has one
+  date       DateTime
+  value      Json
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, source, externalId])
+  @@index([userId, source, date])
+  @@index([userId, type, date])
+}
+
+model DailyTask {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String   // YYYY-MM-DD, the day this task list is for
+  text      String
+  reason    String?
+  category  String?  // "Career" | "Ventures" | "Body" | "Finance"
+  done      Boolean  @default(false)
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+// Short, AI-written observations accumulated over time — e.g. "gym consistency
+// drops when sleep averages under 6h". Retrieved by recency and fed back into
+// future prompts so the AI mentor's advice compounds instead of resetting
+// to a blank slate every session.
+model AiMemoryNote {
+  id        String   @id @default(cuid())
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
