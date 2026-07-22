@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
 import { saveState, getTodaysTasks, toggleTask, regenerateTodaysTasks, askMentorAction, getMemoryNotes } from "@/app/actions";
 import type { DashboardData } from "@/lib/defaultState";
 
@@ -185,18 +183,6 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span className="eyebrow">{savedLabel}</span>
-          <Link href="/dashboard/week" className="addbtn" style={{ width: "auto", display: "inline-block", textDecoration: "none" }}>
-            week
-          </Link>
-          <Link href="/dashboard/month" className="addbtn" style={{ width: "auto", display: "inline-block", textDecoration: "none" }}>
-            month
-          </Link>
-          <Link href="/settings" className="addbtn" style={{ width: "auto", display: "inline-block", textDecoration: "none" }}>
-            connected sources
-          </Link>
-          <button className="addbtn" style={{ width: "auto" }} onClick={() => signOut({ callbackUrl: "/login" })}>
-            sign out
-          </button>
         </div>
       </div>
 
