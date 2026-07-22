@@ -62,14 +62,7 @@ export default function WeekClient() {
           <div className="eyebrow">LIFE OS</div>
           <h1>Week</h1>
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <Link href="/dashboard" className="addbtn" style={{ width: "auto", textDecoration: "none" }}>
-            ← dashboard
-          </Link>
-          <Link href="/dashboard/month" className="addbtn" style={{ width: "auto", textDecoration: "none" }}>
-            month view →
-          </Link>
-        </div>
+
       </div>
 
       <div className="card">
