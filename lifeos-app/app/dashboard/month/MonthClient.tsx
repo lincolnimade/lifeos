@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { getMonthData, saveMonthlyReflection } from "@/app/actions";
 
 type Metric = { id: string; source: string; type: string; date: string; value: Record<string, unknown> };
@@ -44,14 +43,7 @@ export default function MonthClient() {
           <div className="eyebrow">LIFE OS</div>
           <h1>Month</h1>
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <Link href="/dashboard/week" className="addbtn" style={{ width: "auto", textDecoration: "none" }}>
-            ← week
-          </Link>
-          <Link href="/dashboard" className="addbtn" style={{ width: "auto", textDecoration: "none" }}>
-            dashboard →
-          </Link>
-        </div>
+
       </div>
 
       <div className="card">
