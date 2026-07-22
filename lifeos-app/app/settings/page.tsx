@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import AppShell from "@/app/components/AppShell";
 import {
   getIntegrationsStatus,
   saveApiKeyIntegration,
@@ -89,16 +89,8 @@ export default function SettingsPage() {
   const find = (p: string) => statuses.find((s) => s.provider === p);
 
   return (
+    <AppShell title="Connected sources" crumb="Home / Dashboard / Settings">
     <div className="page">
-      <div className="hdr">
-        <div>
-          <div className="eyebrow">LIFE OS</div>
-          <h1>Connected sources</h1>
-        </div>
-        <Link href="/dashboard" className="addbtn" style={{ width: "auto", display: "inline-block", textDecoration: "none" }}>
-          ← back to dashboard
-        </Link>
-      </div>
 
       {message && (
         <div className="card" style={{ padding: "12px 16px", marginBottom: 16 }}>
@@ -261,5 +253,6 @@ export default function SettingsPage() {
         </button>
       </div>
     </div>
+    </AppShell>
   );
 }
