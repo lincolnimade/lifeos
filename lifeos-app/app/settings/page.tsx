@@ -91,6 +91,12 @@ export default function SettingsPage() {
     refresh();
   }, []);
 
+  useEffect(() => {
+    if (!message) return;
+    const t = setTimeout(() => setMessage(""), 3500);
+    return () => clearTimeout(t);
+  }, [message]);
+
   async function handleHevySave() {
     if (!hevyKey.trim()) return;
     await saveApiKeyIntegration("hevy", hevyKey.trim());
@@ -157,15 +163,19 @@ export default function SettingsPage() {
 
   return (
     <AppShell title="Connected sources" crumb="Home / Dashboard / Settings">
+      {message && (
+        <div className="toast">
+          <span className="dot" />
+          {message}
+        </div>
+      )}
       <div className="page">
         <div className="settings-summary">
           <div>
             <div className="settings-summary-count">
               <span>{connectedCount}</span> / 4 sources connected
             </div>
-            <div className="settings-summary-sub">
-              {message || "Data feeds your daily tasks, week view, and AI mentor."}
-            </div>
+            <div className="settings-summary-sub">Data feeds your daily tasks, week view, and AI mentor.</div>
           </div>
           <button className="btn btn-primary" onClick={handleManualSync} disabled={syncing}>
             <RefreshIcon />
