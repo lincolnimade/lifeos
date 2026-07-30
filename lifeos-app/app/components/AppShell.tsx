@@ -75,6 +75,13 @@ function LogoutIcon() {
     </svg>
   );
 }
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  );
+}
 
 export default function AppShell({
   title,
@@ -87,6 +94,7 @@ export default function AppShell({
 }) {
   const pathname = usePathname();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const stored = (typeof window !== "undefined" && window.localStorage.getItem("theme")) as "dark" | "light" | null;
@@ -94,6 +102,19 @@ export default function AppShell({
     setTheme(initial);
     document.documentElement.setAttribute("data-theme", initial);
   }, []);
+
+  useEffect(() => {
+    setNavOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setNavOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [navOpen]);
 
   function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
@@ -104,7 +125,9 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {navOpen && <div className="sidebar-backdrop" onClick={() => setNavOpen(false)} />}
+
+      <aside className={"sidebar" + (navOpen ? " open" : "")}>
         <div className="sidebar-brand">
           <div className="mark">L</div>
           <div className="name">Life OS</div>
@@ -134,9 +157,14 @@ export default function AppShell({
 
       <div className="main-col">
         <header className="topbar">
-          <div>
-            <div className="topbar-title">{title}</div>
-            {crumb && <div className="topbar-crumb">{crumb}</div>}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button className="icon-btn nav-toggle" onClick={() => setNavOpen(true)} aria-label="Open menu">
+              <MenuIcon />
+            </button>
+            <div>
+              <div className="topbar-title">{title}</div>
+              {crumb && <div className="topbar-crumb">{crumb}</div>}
+            </div>
           </div>
           <div className="topbar-actions">
             <button className="icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
