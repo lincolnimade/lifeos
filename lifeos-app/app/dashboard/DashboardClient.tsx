@@ -2,6 +2,102 @@
 
 import { useEffect, useRef, useState } from "react";
 import { saveState, getTodaysTasks, toggleTask, regenerateTodaysTasks, askMentorAction, getMemoryNotes } from "@/app/actions";
+import NetWorthChart from "@/app/components/NetWorthChart";
+
+function Ico({ children }: { children: React.ReactNode }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+}
+const IconTasks = () => (
+  <Ico>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <path d="M7 12l3 3 7-7" />
+  </Ico>
+);
+const IconSparkle = () => (
+  <Ico>
+    <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" />
+  </Ico>
+);
+const IconBriefcase = () => (
+  <Ico>
+    <rect x="2" y="7" width="20" height="14" rx="2" />
+    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+  </Ico>
+);
+const IconCoins = () => (
+  <Ico>
+    <circle cx="8" cy="8" r="6" />
+    <path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-.7.71" />
+  </Ico>
+);
+const IconRocket = () => (
+  <Ico>
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+    <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  </Ico>
+);
+const IconActivity = () => (
+  <Ico>
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+  </Ico>
+);
+const IconFlag = () => (
+  <Ico>
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+    <path d="M4 22V15" />
+  </Ico>
+);
+const IconRepeat = () => (
+  <Ico>
+    <path d="M17 2l4 4-4 4" />
+    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+    <path d="M7 22l-4-4 4-4" />
+    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+  </Ico>
+);
+const IconTarget = () => (
+  <Ico>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="12" cy="12" r="1" />
+  </Ico>
+);
+const IconCalendar = () => (
+  <Ico>
+    <rect x="3" y="4" width="18" height="17" rx="2" />
+    <path d="M3 9h18M8 2v4M16 2v4" />
+  </Ico>
+);
+const IconTrendUp = () => (
+  <Ico>
+    <path d="M23 6l-9.5 9.5-5-5L1 18" />
+    <path d="M17 6h6v6" />
+  </Ico>
+);
+const IconList = () => (
+  <Ico>
+    <path d="M8 6h13M8 12h13M8 18h13" />
+    <path d="M3 6h.01M3 12h.01M3 18h.01" />
+  </Ico>
+);
+const IconCompass = () => (
+  <Ico>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z" />
+  </Ico>
+);
+const IconMap = () => (
+  <Ico>
+    <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4z" />
+    <path d="M8 2v16M16 6v16" />
+  </Ico>
+);
+
 import type { DashboardData } from "@/lib/defaultState";
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -45,7 +141,7 @@ function playPop() {
 }
 
 function burstConfetti(x: number, y: number) {
-  const colors = ["#C0954F", "#8E703E", "#6E8A6C", "#EAE6DA"];
+  const colors = ["#7C6CF0", "#5B8DEF", "#2FBE7A", "#F0EFF6"];
   for (let i = 0; i < 10; i++) {
     const p = document.createElement("div");
     p.style.cssText = "position:fixed;width:5px;height:5px;pointer-events:none;z-index:9999;border-radius:1px;";
@@ -196,6 +292,9 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
             step={0.1}
             value={state.rating}
             onChange={(e) => update((d) => (d.rating = Number(e.target.value)))}
+            style={{
+              background: `linear-gradient(to right, var(--accent) ${(state.rating / 10) * 100}%, var(--surface-2) ${(state.rating / 10) * 100}%)`,
+            }}
           />
           <div className="n">{state.rating.toFixed(1)}</div>
         </div>
@@ -228,7 +327,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
               className="seg"
               style={{
                 width: Math.max(8, 100 / arr.length) + "%",
-                background: it.pct > 70 ? "#C0954F" : it.pct > 35 ? "#8E703E" : "#5C5A4F",
+                background: it.pct > 70 ? "var(--up)" : it.pct > 35 ? "var(--accent)" : "var(--text-dim)",
               }}
             >
               {it.label}
@@ -239,7 +338,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
       <div className="card">
         <div className="card-hd">
-          <h2>Today&apos;s tasks</h2>
+          <h2 className="card-hd-title"><IconTasks />Today&apos;s tasks</h2>
           <button className="addbtn" style={{ width: "auto" }} onClick={handleRegenerate} disabled={generating}>
             {generating ? "generating…" : "regenerate"}
           </button>
@@ -247,10 +346,10 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
         {tasksLoading ? (
           <p style={{ fontSize: 13, color: "var(--text-mid)" }}>Loading…</p>
         ) : tasks.length === 0 ? (
-          <p style={{ fontSize: 13, color: "var(--text-mid)" }}>
-            No task list yet for today — connect a source and hit regenerate, or wait for the
-            morning run.
-          </p>
+          <div className="empty-state">
+            <IconTasks />
+            <p>No task list yet for today — connect a source and hit regenerate, or wait for the morning run.</p>
+          </div>
         ) : (
           tasks.map((t) => (
             <div className={"row-item" + (t.done ? " done" : "")} key={t.id}>
@@ -267,7 +366,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
       <div className="card">
         <div className="card-hd">
-          <h2>AI Mentor</h2>
+          <h2 className="card-hd-title"><IconSparkle />AI Mentor</h2>
           {memoryCount !== null && <span className="tag sage">{memoryCount} memories</span>}
         </div>
         {chatLog.map((turn, i) => (
@@ -296,7 +395,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
         <div>
           <div className="card">
             <div className="card-hd">
-              <h2>Career pipeline</h2>
+              <h2 className="card-hd-title"><IconBriefcase />Career pipeline</h2>
               <span className="tag">Qstream → AE → CRO</span>
             </div>
             <div className="barlabel">
@@ -341,6 +440,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
               <h2>Net worth trajectory</h2>
               <span className="tag sage">Coast FI: €280-300k by 31-32</span>
             </div>
+            <NetWorthChart targets={state.netWorth.yearTargets} current={state.netWorth.current} />
             {state.netWorth.yearTargets.map((t, i) => {
               const pct = Math.min(100, Math.round((state.netWorth.current / t) * 100));
               return (
@@ -357,7 +457,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
           <div className="card">
             <div className="card-hd">
-              <h2>Income sources</h2>
+              <h2 className="card-hd-title"><IconCoins />Income sources</h2>
               <span className="tag">Target: 5 by year 5</span>
             </div>
             {state.incomeSources.map((src, i) => (
@@ -380,7 +480,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
         <div>
           <div className="card">
             <div className="card-hd">
-              <h2>Ventures</h2>
+              <h2 className="card-hd-title"><IconRocket />Ventures</h2>
               <span className="tag">Portfolio</span>
             </div>
             {state.deals.map((deal, i) => (
@@ -426,7 +526,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
           <div className="card">
             <div className="card-hd">
-              <h2>Body</h2>
+              <h2 className="card-hd-title"><IconActivity />Body</h2>
               <span className="tag">92-95kg @ 10% bf</span>
             </div>
             <div className="stat-strip" style={{ marginBottom: 12 }}>
@@ -495,7 +595,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
           <div className="card">
             <div className="card-hd">
-              <h2>Lifestyle milestones</h2>
+              <h2 className="card-hd-title"><IconFlag />Lifestyle milestones</h2>
             </div>
             {state.milestones.map((m, i) => (
               <div className="milestone" key={i}>
@@ -529,7 +629,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
       <div className="card">
         <div className="card-hd">
-          <h2>Daily habits</h2>
+          <h2 className="card-hd-title"><IconRepeat />Daily habits</h2>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button className="addbtn" style={{ width: "auto", padding: "5px 9px" }} onClick={() => update((d) => (d.weekOffset -= 1))}>
               ‹
@@ -620,7 +720,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
       <div className="grid">
         <div className="card">
           <div className="card-hd">
-            <h2>Weekly targets</h2>
+            <h2 className="card-hd-title"><IconTarget />Weekly targets</h2>
             <span className="tag sage">
               {state.weeklyHabits.reduce((sum, h) => sum + Math.min(h.goal, state.weeklyLog.filter((l) => l.habitId === h.id && weekDates.includes(l.date)).length), 0)}
               /{state.weeklyHabits.reduce((sum, h) => sum + h.goal, 0)}
@@ -670,7 +770,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
         <div className="card">
           <div className="card-hd">
-            <h2>Monthly</h2>
+            <h2 className="card-hd-title"><IconCalendar />Monthly</h2>
           </div>
           {state.monthly.map((h, i) => (
             <div className={"row-item" + (h.done ? " done" : "")} key={i}>
@@ -690,7 +790,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
       <div className="grid">
         <div className="card">
           <div className="card-hd">
-            <h2>This quarter</h2>
+            <h2 className="card-hd-title"><IconTrendUp />This quarter</h2>
             <span className="tag">Q{q} {new Date().getFullYear()}</span>
           </div>
           {state.quarterGoals.map((g, i) => (
@@ -743,7 +843,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
         <div className="card">
           <div className="card-hd">
-            <h2>Bucket list</h2>
+            <h2 className="card-hd-title"><IconList />Bucket list</h2>
             <span className="tag sage">{bucketPct}%</span>
           </div>
           {state.bucketList.map((b, i) => (
@@ -766,7 +866,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
       <div className="card">
         <div className="card-hd">
-          <h2>Year — grounding</h2>
+          <h2 className="card-hd-title"><IconCompass />Year — grounding</h2>
         </div>
         <div className="field-row">
           <textarea
@@ -800,7 +900,7 @@ export default function DashboardClient({ initialState }: { initialState: Dashbo
 
       <div className="card">
         <div className="card-hd">
-          <h2>Five year plan</h2>
+          <h2 className="card-hd-title"><IconMap />Five year plan</h2>
         </div>
         <div className="timeline">
           {state.fiveYearPlan.map((p, i) => (
