@@ -12,7 +12,8 @@ async function handleSubmit(e: React.FormEvent) {
 e.preventDefault();
 setLoading(true);
 setError("");
-const res = await signIn("credentials", { email, password, redirect: false });
+const normalizedEmail = email.trim().toLowerCase();
+const res = await signIn("credentials", { email: normalizedEmail, password, redirect: false });
 setLoading(false);
 if (!res || res.error) {
 setError("Invalid email or password.");
@@ -26,8 +27,8 @@ return (
 <form className="login-card" onSubmit={handleSubmit}>
 <div className="eyebrow">LIFE OS</div>
 <h1>Log in</h1>
-<input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-<input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+<input type="email" placeholder="Email" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+<input type="password" placeholder="Password" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
 {error && <div className="login-error">{error}</div>}
 <button type="submit" disabled={loading}>{loading ? "Logging in…" : "Log in"}</button>
 </form>
